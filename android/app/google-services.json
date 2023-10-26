@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "247162288480",
+    "project_id": "talkify-70015",
+    "storage_bucket": "talkify-70015.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247162288480:android:54b5cb53f470bff31e0605",
+        "android_client_info": {
+          "package_name": "com.attech.talkifyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBktn2cEsRHyO4Oh4NFlDKdcypBoRJli6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
