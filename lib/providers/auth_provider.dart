@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:talkify/services/navigation_service.dart';
 import '../services/snackbar_service.dart';
+import '../services/navigation_service.dart';
 enum AuthStatus{
   notAuthenticated,
   authenticating,
@@ -28,6 +30,7 @@ class AuthProvider extends ChangeNotifier{
      status = AuthStatus.authenticated;
      print("Logged in Successfully");
      SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
+     //update lastseen time
     }catch (e){
       status= AuthStatus.error;
       print("Login Error");
@@ -36,6 +39,26 @@ class AuthProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+ void registerUserWithEmailAndPassword(String email,String password, Future<void> Function(String uid) onSuccess) async{
+    status = AuthStatus.authenticating;
+    notifyListeners();
+    try{
+      UserCredential? result = await _auth?.createUserWithEmailAndPassword(email: email, password: password);
+      user = result?.user;
+      status  = AuthStatus.authenticated;
+      await onSuccess((user?.uid)!);
+      SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
+      //update lastseen time
+      NavigationService.instance.goBack();
+    }
+    catch(e){
+      status = AuthStatus.error;
+      user =  null;
+      SnackBarService.instance.showSnackBarError("Error Registering user");
+
+    }
+    notifyListeners();
+ }
 
 }
 
