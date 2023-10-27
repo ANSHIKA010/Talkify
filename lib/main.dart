@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:talkify/Pages/login_page.dart';
+import 'package:talkify/pages/home_page.dart';
 import 'Pages/registration_page.dart';
 import './services/navigation_service.dart';
+
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "login": (BuildContext _context) => LoginPage(),
         "register": (BuildContext _context) => const RegistrationPage(),
+        "home": (BuildContext _context) => HomePage(),
       },
     );
   }

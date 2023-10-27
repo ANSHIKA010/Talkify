@@ -31,9 +31,11 @@ class AuthProvider extends ChangeNotifier{
      print("Logged in Successfully");
      SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
      //update lastseen time
+      NavigationService.instance.navigateToReplacement("home");
     }catch (e){
       status= AuthStatus.error;
       print("Login Error");
+      user = null;
       SnackBarService.instance.showSnackBarError("Error Authenticating ");
 
     }
@@ -50,6 +52,7 @@ class AuthProvider extends ChangeNotifier{
       SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
       //update lastseen time
       NavigationService.instance.goBack();
+      NavigationService.instance.navigateToReplacement("home");
     }
     catch(e){
       status = AuthStatus.error;
