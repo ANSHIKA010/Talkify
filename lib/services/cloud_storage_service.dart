@@ -14,7 +14,8 @@ import 'dart:io';
    }
     Future<dynamic> uploadUserImage(String uid,File _image) async {
      try{
-       return await _baseRef.child(_profileImages).child(uid).putFile(_image).onComplete;
+       await _baseRef.child(_profileImages).child(uid).putFile(_image);
+       return _baseRef.child(_profileImages).child(uid);
      }
      catch(e){
        print(e);
