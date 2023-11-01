@@ -20,7 +20,22 @@ class AuthProvider extends ChangeNotifier{
 
   AuthProvider() {
     _auth = FirebaseAuth.instance;
+    _checkCurrentUserIsAuthenticated();
   }
+
+  void _autoLogin(){
+    if(user!= null){
+      NavigationService.instance.navigateToReplacement("home");
+    }
+  }
+  void _checkCurrentUserIsAuthenticated() async {
+    user = await _auth?.currentUser;
+    if(user!=null){
+      notifyListeners();
+      _autoLogin();
+    }
+  }
+
   void loginUserWithEmailAndPassword(String email, String password) async{
     status = AuthStatus.authenticating;
     notifyListeners();
