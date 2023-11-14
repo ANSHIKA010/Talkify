@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:talkify/providers/auth_provider.dart';
 import './profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +16,7 @@ class _HomePageState extends State<HomePage>
   late double _height;
   late double _width;
   late TabController _tabController;
+
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
@@ -29,6 +32,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
