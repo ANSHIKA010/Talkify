@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:talkify/providers/auth_provider.dart';
 import './profile_page.dart';
+import './recent_conversations_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage>
       controller: _tabController,
       children: <Widget>[
        ProfilePage(_height,_width),
-        ProfilePage(_height,_width),
+       RecentConversationsPage(_height, _width),
         ProfilePage(_height,_width),
     ],
     );
