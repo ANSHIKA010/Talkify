@@ -23,7 +23,7 @@ class RecentConversationsPage extends StatelessWidget {
           return ListTile(
             onTap: () {} ,
             title: Text("Anshika Shrivastava"),
-            subtitle: Text("subtitle"),
+            subtitle: Text("Nasta mai kya kara"),
             leading: Container(
               width: 50,
               height: 50,
