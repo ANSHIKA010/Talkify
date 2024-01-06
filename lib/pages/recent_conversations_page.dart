@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import '../models/conversation.dart';
+import '../providers/auth_provider.dart';
+import '../services/db_service.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class RecentConversationsPage extends StatelessWidget {
   final double _height;
@@ -10,34 +16,53 @@ class RecentConversationsPage extends StatelessWidget {
     return Container(
       height: _height,
       width: _width,
-      child: _conversationsListViewWidget(),
+      child: ChangeNotifierProvider<AuthProvider>.value(
+        value: AuthProvider.instance,
+          child: _conversationsListViewWidget(),
+    ),
     );
   }
   Widget _conversationsListViewWidget(){
-    return Container(
-      height: _height,
-      width: _width,
-      child: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (_context,_index) {
-          return ListTile(
-            onTap: () {} ,
-            title: Text("Anshika Shrivastava"),
-            subtitle: Text("Nasta mai kya kara"),
-            leading: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                image: DecorationImage(
-                  image: NetworkImage("https://i.pravatar.cc/150?=3"),
-                ),
-              ),
-            ),
-            trailing: _listTileTrailingWidget(),
-          );
-        },
-      ),
+    return Builder(
+      builder: (BuildContext context){
+      var _auth = Provider.of<AuthProvider>(context);
+      return Container(
+        height: _height,
+        width: _width,
+        child: StreamBuilder<List<ConversationSnippet>>(
+          stream: DBService.instance.getUserConversations(_auth.user!.uid),
+          builder: (context, _snapshot){
+            var _data = _snapshot.data ;
+            return _snapshot.hasData ?
+            ListView.builder(
+              itemCount: _data?.length,
+              itemBuilder: (_context, _index) {
+                var _dataIndex = _data![_index];
+                return ListTile(
+                  onTap: () {},
+                  title: Text(_dataIndex.name),
+                  subtitle: Text(_dataIndex.lastMessage),
+                  leading: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(_dataIndex.image),
+                      ),
+                    ),
+                  ),
+                  trailing: _listTileTrailingWidget(),
+                );
+              },
+            ) : SpinKitWanderingCubes(
+              color: Colors.blue,
+              size: 50.0,
+            );
+      },
+        ));
+    },
     );
   }
   Widget _listTileTrailingWidget(){
