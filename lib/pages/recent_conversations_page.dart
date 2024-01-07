@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import '../models/conversation.dart';
@@ -53,7 +55,7 @@ class RecentConversationsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  trailing: _listTileTrailingWidget(),
+                  trailing: _listTileTrailingWidget(_dataIndex.timestamp),
                 );
               },
             ) : SpinKitWanderingCubes(
@@ -65,14 +67,14 @@ class RecentConversationsPage extends StatelessWidget {
     },
     );
   }
-  Widget _listTileTrailingWidget(){
+  Widget _listTileTrailingWidget(Timestamp _lastMessageTimestamp){
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Text(
-          "LastSeen",
+         timeago.format(_lastMessageTimestamp.toDate()),
           style: TextStyle(fontSize: 15),
         ),
         Container(
