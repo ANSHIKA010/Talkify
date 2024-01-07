@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/contact.dart';
 import '../services/db_service.dart';
 import '../providers/auth_provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class SearchPage extends StatefulWidget {
   double _height;
@@ -83,6 +84,10 @@ class _SearchPageState extends State<SearchPage> {
       stream: DBService.instance.getUserInDB(_searchText),
       builder: (_context, _snapshot) {
         var _usersData = _snapshot.data;
+        if(_usersData != null){
+          _usersData.removeWhere((_contact) => _contact.id == _auth.user?.uid);
+        }
+
 
         return _snapshot.hasData
             ? Container(
@@ -124,8 +129,19 @@ class _SearchPageState extends State<SearchPage> {
                             "last seen",
                       style: TextStyle(fontSize: 15),
                     ),
-                          Text(
-                            "About an hour ago",
+                         (_isUserActive ?? false )?
+                             Container(
+                               height: 10,
+                               width: 10,
+                               decoration: BoxDecoration(
+                                 color: Colors.green,
+                                 borderRadius: BorderRadius.circular(100),
+                               ),
+                             ) :
+                            Text(
+                             timeago.format(
+                               _userData.lastSeen?.toDate(),
+                             ),
                             style: TextStyle(fontSize: 15),
                           ),
                         ],
