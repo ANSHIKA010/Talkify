@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:talkify/services/navigation_service.dart';
 import '../services/snackbar_service.dart';
 import '../services/navigation_service.dart';
+import '../services/db_service.dart';
 enum AuthStatus{
   notAuthenticated,
   authenticating,
@@ -23,16 +24,17 @@ class AuthProvider extends ChangeNotifier{
     _checkCurrentUserIsAuthenticated();
   }
 
-  void _autoLogin(){
+  Future<void>_autoLogin() async{
     if(user!= null){
-      NavigationService.instance.navigateToReplacement("home");
+      await DBService.instance.updateUserLastSeenTime(user!.uid);
+      return NavigationService.instance.navigateToReplacement("home");
     }
   }
   void _checkCurrentUserIsAuthenticated() async {
     user = await _auth?.currentUser;
     if(user!=null){
       notifyListeners();
-      _autoLogin();
+      await _autoLogin();
     }
   }
 
@@ -45,7 +47,7 @@ class AuthProvider extends ChangeNotifier{
      status = AuthStatus.authenticated;
      print("Logged in Successfully");
      SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
-     //update lastseen time
+     await DBService.instance.updateUserLastSeenTime(user!.uid);
       NavigationService.instance.navigateToReplacement("home");
     }catch (e){
       status= AuthStatus.error;
@@ -66,6 +68,7 @@ class AuthProvider extends ChangeNotifier{
       await onSuccess((user?.uid)!);
       SnackBarService.instance.showSnackBarSuccess("Welcome, ${user!.email}");
       //update lastseen time
+      await DBService.instance.updateUserLastSeenTime(user!.uid);
       NavigationService.instance.goBack();
       NavigationService.instance.navigateToReplacement("home");
     }

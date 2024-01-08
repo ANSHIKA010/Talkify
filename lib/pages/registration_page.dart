@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:talkify/services/db_service.dart';
 import 'package:talkify/services/media_service.dart';
 import 'package:talkify/services/navigation_service.dart';
-import 'package:talkify/services/snackbar_service.dart';
 import '../providers/auth_provider.dart';
 import '../services/cloud_storage_service.dart';
 import '../services/db_service.dart';
+import '../services/snackbar_service.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -48,6 +48,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Widget? registrationPageUI() {
     return Builder(builder: (BuildContext context) {
+      SnackBarService.instance.buildContext = context;
       _auth = Provider.of<AuthProvider>(context);
       return Container(
         height: _deviceHeight * 0.75,
