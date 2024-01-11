@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/message.dart';
 
 class ConversationSnippet{
   final String id;
@@ -29,6 +30,45 @@ class ConversationSnippet{
       timestamp: _data["timestamp"],
       name: _data["name"],
       image: _data["image"],
+    );
+  }
+}
+
+class Conversation{
+  final String id;
+  final List members;
+  final List<Message> messages;
+  final String ownerID;
+
+  Conversation(
+      {
+        required this.id,
+        required this.members,
+        required this.ownerID,
+        required this.messages});
+
+  factory Conversation.fromFirestore(DocumentSnapshot _snapshot){
+    var _data = _snapshot.data() as Map<String, dynamic>;
+    List? _messages = _data?["messages"];
+    if(_messages != null) {
+      _messages = _messages.map((_m) {
+        var _messageType = _m["type"] == "text" ? MessageType.Text : MessageType
+            .Image;
+        return Message(senderID: _m["senderID"] ?? '',
+            content: _m["message"] ?? '',
+            timestamp: _m["timestamp"] ?? Timestamp.now(),
+            type: _messageType);
+      },
+      ).toList();
+    }
+    else {
+      _messages = null;
+    }
+    return Conversation(
+        id: _snapshot.id,
+        members: _data["members"],
+        ownerID: _data["ownerID"],
+        messages: _messages as List<Message>,
     );
   }
 }

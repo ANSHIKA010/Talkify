@@ -7,6 +7,8 @@ import '../models/conversation.dart';
 import '../providers/auth_provider.dart';
 import '../services/db_service.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../services/navigation_service.dart';
+import '../pages/conversation_page.dart';
 
 class RecentConversationsPage extends StatelessWidget {
   final double _height;
@@ -41,7 +43,11 @@ class RecentConversationsPage extends StatelessWidget {
                 itemBuilder: (_context, _index) {
                   var _dataIndex = _data![_index];
                   return ListTile(
-                    onTap: () {},
+                    onTap: () {
+                      NavigationService.instance.navigateToRoute(MaterialPageRoute(builder: (BuildContext _context){
+                        return ConversationPage(_dataIndex.conversationID, _dataIndex.id, _dataIndex.name, _dataIndex.image);
+                      },),);
+                    },
                     title: Text(_dataIndex.name),
                     subtitle: Text(_dataIndex.lastMessage),
                     leading: Container(
