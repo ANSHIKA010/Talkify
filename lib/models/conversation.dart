@@ -7,6 +7,7 @@ class ConversationSnippet{
   final String lastMessage;
   final String name;
   final String image;
+  final MessageType type;
   final int unseenCount;
   final Timestamp timestamp;
 
@@ -19,9 +20,21 @@ class ConversationSnippet{
      required this.timestamp,
      required this.name,
      required this.image,
+    required this.type,
 });
   factory ConversationSnippet.fromFirestore(DocumentSnapshot _snapshot) {
     var _data = _snapshot.data() as Map<String,dynamic>;
+    var _messageType = MessageType.Text;
+    if(_data["type"] != null){
+      switch( _data["type"]){
+        case  "text" :
+          break;
+          case "image" :
+            _messageType = MessageType.Image;
+            break;
+        default:
+      }
+    }
     return ConversationSnippet(
       id: _snapshot.id,
       conversationID: _data["conversationID"],
@@ -30,6 +43,7 @@ class ConversationSnippet{
       timestamp: _data["timestamp"],
       name: _data["name"],
       image: _data["image"],
+      type: _messageType,
     );
   }
 }

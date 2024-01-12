@@ -4,6 +4,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import '../models/conversation.dart';
+import '../models/message.dart';
 import '../providers/auth_provider.dart';
 import '../services/db_service.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -49,7 +50,7 @@ class RecentConversationsPage extends StatelessWidget {
                       },),);
                     },
                     title: Text(_dataIndex.name),
-                    subtitle: Text(_dataIndex.lastMessage),
+                    subtitle: Text(_dataIndex.type == MessageType.Text ? _dataIndex.lastMessage : "Attachment : Image" ),
                     leading: Container(
                       width: 50,
                       height: 50,

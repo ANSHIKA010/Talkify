@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,12 +28,13 @@ class _ConversationPageState extends State<ConversationPage> {
   late double _deviceHeight;
   late double _deviceWidth;
   GlobalKey<FormState> ?_formKey;
-
+late ScrollController _listViewController;
   late AuthProvider _auth;
    late String _messageText;
   _ConversationPageState(){
     _formKey = GlobalKey<FormState>();
     _messageText = "";
+    _listViewController = ScrollController();
   }
   @override
   Widget build(BuildContext context) {
@@ -76,9 +79,14 @@ class _ConversationPageState extends State<ConversationPage> {
         stream: DBService.instance.getConversation(this.widget._conversationID)
             as Stream<Conversation>,
         builder: (BuildContext _context, _snapshot) {
+          Timer(Duration(milliseconds: 50), () => {
+            _listViewController.jumpTo(_listViewController.position.maxScrollExtent),
+          },
+          );
           var _conversationData = _snapshot.data;
           if (_conversationData != null) {
             return ListView.builder(
+              controller: _listViewController,
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               itemCount: _conversationData.messages.length,
               itemBuilder: (BuildContext _context, int _index) {
@@ -107,6 +115,7 @@ class _ConversationPageState extends State<ConversationPage> {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
          ! _isOwnMessage ? _userImageWidget() : Container(),
+          SizedBox(width: _deviceWidth * 0.02),
           _message.type == MessageType.Text
           ?  _textMessageBubble(
               _isOwnMessage, _message.content, _message.timestamp)
