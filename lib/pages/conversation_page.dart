@@ -7,6 +7,8 @@ import '../models/conversation.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/message.dart';
+import '../services/media_service.dart';
+import '../services/cloud_storage_service.dart';
 
 class ConversationPage extends StatefulWidget {
   final String _conversationID;
@@ -105,8 +107,10 @@ class _ConversationPageState extends State<ConversationPage> {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
          ! _isOwnMessage ? _userImageWidget() : Container(),
-          _textMessageBubble(
-            _isOwnMessage, _message.content, _message.timestamp),
+          _message.type == MessageType.Text
+          ?  _textMessageBubble(
+              _isOwnMessage, _message.content, _message.timestamp)
+              : _imageMessageBubble(_isOwnMessage, _message.content, _message.timestamp),
         ],
       ),
     );
@@ -133,7 +137,40 @@ class _ConversationPageState extends State<ConversationPage> {
         ? [Colors.blue, Color.fromRGBO(42, 117, 188, 1)]
         : [Color.fromRGBO(69, 69, 69, 1), Color.fromRGBO(43, 43, 43, 1)];
     return Container(
-      height: _deviceHeight * 0.10,
+      height: _deviceHeight * 0.075 + (_message.length /20 * 5.0),
+      width: _deviceWidth * 0.75,
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: _colorScheme,
+          stops: [0.30, 0.70],
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Text(_message),
+          Text(
+            timeago.format(_timestamp.toDate()),
+            style: TextStyle(color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _imageMessageBubble(
+      bool _isOwnMessage, String _imageURL, Timestamp _timestamp) {
+    List<Color> _colorScheme = _isOwnMessage
+        ? [Colors.blue, Color.fromRGBO(42, 117, 188, 1)]
+        : [Color.fromRGBO(69, 69, 69, 1), Color.fromRGBO(43, 43, 43, 1)];
+    return Container(
+      height: _deviceHeight * 0.37,
       width: _deviceWidth * 0.75,
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -150,7 +187,16 @@ class _ConversationPageState extends State<ConversationPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Text(_message),
+          Container(
+            height: _deviceHeight *0.30,
+            width:  _deviceWidth * 0.70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              image: DecorationImage(
+                image: NetworkImage(_imageURL), fit: BoxFit.cover),
+              )
+            ),
+
           Text(
             timeago.format(_timestamp.toDate()),
             style: TextStyle(color: Colors.white70),
@@ -248,7 +294,22 @@ class _ConversationPageState extends State<ConversationPage> {
       height: _deviceHeight*0.05,
       width: _deviceWidth*0.05,
       child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: ()async {
+          var _image = await MediaService.instance.getImageFromLibrary();
+          if(_image != null){
+            var _result = await CloudStorageService.instance.uploadMediaMessage(_auth.user!.uid, _image);
+            var _imageURL = await _result.ref.getDownloadURL();
+            DBService.instance.sendMessage(
+                this.widget._conversationID,
+                Message(
+                  content: _imageURL,
+                  senderID: _auth.user!.uid,
+                  timestamp: Timestamp.now(),
+                  type: MessageType.Image
+                ),
+            );
+          }
+        },
         child: Icon(Icons.camera_enhance),
       ),
     );
