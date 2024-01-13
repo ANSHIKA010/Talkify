@@ -5,6 +5,8 @@ import '../models/contact.dart';
 import '../services/db_service.dart';
 import '../providers/auth_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../services/navigation_service.dart';
+import '../pages/conversation_page.dart';
 
 class SearchPage extends StatefulWidget {
   double _height;
@@ -84,10 +86,9 @@ class _SearchPageState extends State<SearchPage> {
       stream: DBService.instance.getUserInDB(_searchText),
       builder: (_context, _snapshot) {
         var _usersData = _snapshot.data;
-        if(_usersData != null){
+        if (_usersData != null) {
           _usersData.removeWhere((_contact) => _contact.id == _auth.user?.uid);
         }
-
 
         return _snapshot.hasData
             ? Container(
@@ -97,12 +98,31 @@ class _SearchPageState extends State<SearchPage> {
                   itemBuilder: (BuildContext context, int _index) {
                     var _userData = _usersData![_index];
                     var _currentTime = DateTime.now();
+                    var _recepientID = _usersData[_index].id;
                     var _isUserActive = _userData.lastSeen?.toDate().isAfter(
-                      _currentTime.subtract(
-                        Duration(hours: 1),
-                      ),
-                    );
+                          _currentTime.subtract(
+                            Duration(hours: 1),
+                          ),
+                        );
                     return ListTile(
+                      onTap: () {
+                        DBService.instance.createOrGetConversation(
+                            _auth.user!.uid,
+                            _recepientID!,
+                            (String _conversationID) {
+                              NavigationService.instance.navigateToRoute(MaterialPageRoute(builder: (_context){
+                                return ConversationPage(
+                                    _conversationID,
+                                    _recepientID,
+                                    _userData.name ?? "default name",
+                                    _userData.image ?? "https://i.ibb.co/3hgwQPH/icons8-user-100.jpg",
+                                );
+                              }),
+                              );
+                              return Future(() => null);
+                            },
+                        );
+                      },
                       title: Text(_userData.name ?? "default name"),
                       leading: Container(
                         width: 50,
@@ -110,8 +130,9 @@ class _SearchPageState extends State<SearchPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: NetworkImage(_userData.image ??"https://i.ibb.co/3hgwQPH/icons8-user-100.jpg"),
+                            fit: BoxFit.cover,
+                            image: NetworkImage(_userData.image ??
+                                "https://i.ibb.co/3hgwQPH/icons8-user-100.jpg"),
                           ),
                         ),
                       ),
@@ -120,30 +141,30 @@ class _SearchPageState extends State<SearchPage> {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                         ( _isUserActive ?? false) ?
-                          Text(
-                          "Active Now",
-                            style: TextStyle(fontSize: 15),
-                          ) :
-                          Text(
-                            "last seen",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                         (_isUserActive ?? false )?
-                             Container(
-                               height: 10,
-                               width: 10,
-                               decoration: BoxDecoration(
-                                 color: Colors.green,
-                                 borderRadius: BorderRadius.circular(100),
-                               ),
-                             ) :
-                            Text(
-                             timeago.format(
-                               _userData.lastSeen?.toDate(),
-                             ),
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          (_isUserActive ?? false)
+                              ? Text(
+                                  "Active Now",
+                                  style: TextStyle(fontSize: 15),
+                                )
+                              : Text(
+                                  "last seen",
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                          (_isUserActive ?? false)
+                              ? Container(
+                                  height: 10,
+                                  width: 10,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                )
+                              : Text(
+                                  timeago.format(
+                                    _userData.lastSeen?.toDate(),
+                                  ),
+                                  style: TextStyle(fontSize: 15),
+                                ),
                         ],
                       ),
                     );

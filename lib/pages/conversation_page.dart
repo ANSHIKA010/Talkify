@@ -85,16 +85,23 @@ late ScrollController _listViewController;
           );
           var _conversationData = _snapshot.data;
           if (_conversationData != null) {
-            return ListView.builder(
-              controller: _listViewController,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              itemCount: _conversationData.messages.length,
-              itemBuilder: (BuildContext _context, int _index) {
-                var _message = _conversationData.messages[_index];
-                bool _isOwnMessage = _message.senderID == _auth.user?.uid;
-                return _messageListViewChild(_isOwnMessage, _message);
-              },
-            );
+            if(_conversationData.messages!= null && _conversationData.messages.length != 0){
+              return ListView.builder(
+                controller: _listViewController,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                itemCount: _conversationData.messages.length,
+                itemBuilder: (BuildContext _context, int _index) {
+                  var _message = _conversationData.messages[_index];
+                  bool _isOwnMessage = _message.senderID == _auth.user?.uid;
+                  return _messageListViewChild(_isOwnMessage, _message);
+                },
+              );
+            }else{
+              return Align(
+                alignment: Alignment.center,
+                child: Text("Let's start a conversation"),
+              );
+            }
           } else {
             return SpinKitWanderingCubes(
               color: Colors.blue,

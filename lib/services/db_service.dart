@@ -59,6 +59,34 @@ class DBService {
 
   }
 
+  Future<void> createOrGetConversation(
+  String _currentID,
+      String _recepientID,
+       Future<void> _onSuccess(String _conversationID)) async{
+    var _ref = _db.collection(_conversationsCollection);
+    var _userconversationRef = _db.collection(_userCollection).doc(_currentID).collection(_conversationsCollection);
+    try{
+      var conversation = await _userconversationRef.doc(_recepientID).get();
+      var _data = conversation.data() as Map<String,dynamic>;
+      if(_data != null){
+        return _onSuccess(_data["conversationID"]);
+      }
+      else{
+        var _conversationRef = _ref.doc();
+        await _conversationRef.set({
+          "members" : [_currentID, _recepientID],
+          "ownerID" : _currentID,
+          "messages": [],
+        },
+        );
+        return _onSuccess(_conversationRef.id);
+      }
+    } catch(e){
+      print(e);
+
+    }
+  }
+
   Stream<Contact> getUserData(String _userID){
     var _ref = _db.collection(_userCollection).doc(_userID);
     return _ref.get().asStream().map((_snapshot){
@@ -91,6 +119,4 @@ class DBService {
       return Conversation.fromFirestore(_snapshot);
     });
   }
-
-
 }
