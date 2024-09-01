@@ -85,10 +85,12 @@ uploadedAt: Timestamp - Time when the image was uploaded.
 ```
 ## Application Interface (Screen Shots)
 
-
-## Working Application
-
-
+<span><img src="https://github.com/user-attachments/assets/f758ed77-eae8-40dd-b34c-525457c56798" width="30%"/></span>
+<span><img src="https://github.com/user-attachments/assets/53fd2f87-9e6a-48dd-843e-7356da220616" width="30%"/></span>
+<span><img src="https://github.com/user-attachments/assets/b334a5ea-5804-43cc-9537-bcdd33c0e481" width="30%"/></span>
+<span><img src="https://github.com/user-attachments/assets/e1fbd729-1d75-4f52-9e38-3a090de51d6a" width="30%"/></span>
+<span><img src="https://github.com/user-attachments/assets/989a0103-a454-4f93-aa97-f0db076a7eef" width="30%"/></span>
+<span><img src="https://github.com/user-attachments/assets/b358e2b3-ade6-40ad-af07-35f584b42f4e" width="30%"/></span>
 
 # Project Setup
 Follow the instruction below to setup the project on your device.
@@ -118,17 +120,17 @@ Before you begin, ensure you have met the following requirements:
 4. Setup Firebase
    - Create a new project on the [Firebase Console](https://console.firebase.google.com).
    - Add an Android and/or iOS app to your Firebase project.
-   - Download the **google-services.json** (for Android) or **GoogleService-Info.plist** (for iOS) file and place it in the appropriate directory.
+   - Configure your project using [flutterfire](https://firebase.google.com/docs/flutter/setup?platform=android)
   
 5. Configure and Deploy Cloud Functions
-   - Create a project for google cloud functions.
+   - Activate the service in firebase project for google cloud functions.
    - Use the functions designed --> [File containg functions](https://github.com/ANSHIKA010/Talkify_cloud_functions/blob/02c1b2c4d43c236e54f4fba906efb945e7ad6b7e/functions/index.js)
    - Deploy those function on firebase.
 
 6. Run the app
    ```bash
    flutter run
-
+  
 
 ## Contributing
 
