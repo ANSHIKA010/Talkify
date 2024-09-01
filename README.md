@@ -15,9 +15,74 @@ The application allowed users to authenticate through their email and create a c
 ## User Flow
 ![UserFlow](https://github.com/ANSHIKA010/Talkify/assets/99765179/36c3f64c-59c9-4593-bdfd-18784f123b79)
 
-## System Design and Database Schema
+## System Design
 
+### 1. System Architecture
+The system consists of the following major components:
 
+- Client Application: Built with Flutter, the client app handles the user interface and interactions, including sending and receiving messages and images.
+- Firebase Authentication: Manages user authentication and secure login using email and password.
+- Firestore Database: A NoSQL database that stores user profiles, messages, and other chat-related data in real-time.
+- Firebase Cloud Storage: Stores media files such as profile pictures and images shared in chat.
+- Cloud Functions: Used for server-side logic, such as sending notifications, handling complex queries, and other backend operations.
+
+### 2. Component Interaction
+
+- User Authentication: Users register or log in using their email credentials. Firebase Authentication manages secure sessions.
+- Real-time Messaging: Messages are sent and received in real-time using Firestore, where each conversation is stored as a collection of messages.
+- Media Sharing: Images sent in chat are uploaded to Firebase Cloud Storage, and their URLs are stored in Firestore.
+- Profile Management: Users can update their profiles, including their profile pictures, which are stored in Cloud Storage.
+
+### 3. Data Flow
+
+- Auth Section:
+  - User opens the app -> Check if the user is logged in.
+  - If not logged in -> Redirect to Login or Registration page.
+  - Upon successful login -> Redirect to the Dashboard.
+- On Dashboard:
+  - Access Conversations, Users, or Profile sections.
+  - Start a new conversation or continue an existing one.
+- Messaging:
+  - Send text messages or images.
+  - Messages are displayed in real-time.
+
+## Database Schema
+### 1. Users Collection
+```
+Document ID: UserID (auto-generated)
+Fields:
+email: String - User's email address.
+username: String - User's display name.
+profileImageUrl: String - URL of the profile picture stored in Cloud Storage.
+status: String - User status (online, offline).
+createdAt: Timestamp - Account creation date.
+lastLogin: Timestamp - Last login date.
+```
+### 2. Conversations Collection
+```
+Document ID: ConversationID (auto-generated)
+Fields:
+participants: Array - List of user IDs participating in the conversation.
+lastMessage: String - Preview of the last message sent.
+lastMessageTimestamp: Timestamp - Time when the last message was sent.
+```
+### 3. Messages Subcollection (under Conversations)
+```
+Document ID: MessageID (auto-generated)
+Fields:
+senderId: String - User ID of the sender.
+text: String - Content of the text message (if any).
+imageUrl: String - URL of the image in Cloud Storage (if any).
+timestamp: Timestamp - Time when the message was sent.
+```
+### 4. Images Collection (optional, if storing separately)
+```
+Document ID: ImageID (auto-generated)
+Fields:
+uploadedBy: String - User ID who uploaded the image.
+imageUrl: String - URL of the image in Cloud Storage.
+uploadedAt: Timestamp - Time when the image was uploaded.
+```
 ## Application Interface (Screen Shots)
 
 
