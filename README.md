@@ -12,6 +12,7 @@ The application allowed users to authenticate through their email and create a c
 - **Flutter UI**: Intuitive and responsive user interface built with Flutter for a smooth user experience.
 - **Lexical Seach**: To find specific users amongst all registered users.
 
+
 ## User Flow
 ![UserFlow](https://github.com/ANSHIKA010/Talkify/assets/99765179/36c3f64c-59c9-4593-bdfd-18784f123b79)
 
